@@ -1,0 +1,759 @@
+设计目的：简化新spirng应用的初始搭建以及开发过程
+
+在现有spring框架基础上，开发一个新框架springboot，用来简化配置和部署spring应用程序的过程，去除了繁琐的开发步骤和样板代码及配置
+使得基于spring框架的java企业级应用开发“极简化”
+
+springboot用简单的注解和application.properties配置文件，避免了xml，简化基于spring框架的企业级应用开发的配置
+
+学无止境，
+写书过程也是系统学习和思考的过程，
+
+github.com/Easy-SpringBoot
+
+# 第一部分，springboot框架基础
+## 第一章，springboot简介
+认识一个事物最好的方式是首先取了解他的历史
+
+开源框架，主要为了解决企业级应用程序开发的复杂性
+
+spring提倡”零”侵入设计原则，颠覆了传统的编程模式
+引入inversion of control核心编程思想，由容器来管理协同bean之间的关系，而非传统实现中，由程序代码直接操控
+还把aop集成进来，使得aop的变成范式发扬光大
+
+spring从ioc容器发展，不断集成AOP、MVC、OR/Mapping及各项服务而提供完善的企业应用框架。
+
+随着spirng功能不断丰富，框架渐渐暴露出问题，如太多样板化的配置、繁琐复杂的使用过程等，我们要维护程序代码，还要额外取维护相关的配置文件
+spring项目的配置越来越复杂，大量xml配置以及复杂的依赖管理使得springboot产生
+
+### 从spring到spring boot
+1. 从EJB到spring
+EJB(Enterprise Java Bean)最初设计思想是为分布式应用服务的。
+分布式是针对大型应用构造的跨平台的协作计算，EJb最初的目的是为这种计算服务的
+
+EJB的基础是RMI(Remote Method Invocation)，利用java对象序列化机制实现分布式计算，实现远程对象的实例化及调用。
+通过RMI，J2EE将EJB组件创建为远程对象。
+RMI将各种任务与功能的类放到不同服务器上，通过各种服务间建立的调用规则实现分布式运算
+通过RMI的通信，连接不同功能模块的服务器，以实现一个完整的功能
+
+EJB规范定义了EJB组件在何时如何与他们的容器进行交互作用，容器负责提供公用的服务，如目录服务、事务管理、安全性、资源缓存池及容错性。
+注意，EJB并不是实现J2EE的唯一途径，多数应用不用采用这么重的解决方案
+
+中小型应用，不用采用分布式解决方案，spring就产生
+
+spring目的是为解决企业应用开发的复杂性，主要功能时用基本的java bean代替EJB，提供更多的企业应用功能。
+使得已存在的技术更加易用。
+
+spirng是一个轻量级的控制反转和面向切面的容器框架
+也提供很多基础功能，如事务管理、持久化框架集成等
+
+spring的设计原则是非侵入性的，实际业务中几乎感觉不到spring的存在
+
+spring框架的核心：解耦依赖(DI)、系统模块化(AOP)。
+spirng不重复发明轮子，去继承业内已有的优秀解决方案
+
+spring容易以bean的方式组织和管理java应用中的各组件及其之间的关系
+基于java bean的配置管理，特别是对依赖注入技术的使用，减少了各组件间对业务逻辑具体实现的相互依赖型
+
+sirng用BeanFactory产生和管理Bean，是工厂模式的实现，使用控制反转模式将应用的配置和依赖性规范与实际的应用程序代码分开。
+BeanFactory用依赖注入的方式给组件提供依赖
+
+spring框架主要用于与其他技术(如strut、hibernate、mybatis等)进行整合，将应用程序中的bean组件实现低耦合关联，提高
+系统的可扩展性和维护性
+
+spring集成AOP框架，提供了注入数据库声明式事务等服务，通过用AOP，我们无需依赖EJB组件，可以将声明式事务管理集成到应用中，AOP
+的目的是提高系统的模块化程序
+
+2. spring框架发展简史
+
+3. spirng框架的核心模块
+1)核心容器模块
+提供spring框架的基本功能，包括core、beans、Context、EL(Expression Language(E2))模块
+
+core模块封装了框架依赖的最底层部分，包括资源访问、类型转换以及一些常用工具类。
+Beans模块中主要组件是BeanFactory，工厂模式的实现。
+Context模块是一个配置文件，向Spirng框架提供上下文信息
+EL模块提供强大的表达式语言支持
+
+2) AOP、Aspects模块
+AOP模块提供了符合AOP Alliance规范的面向切面的编程实现，如日志记录、权限控制、性能统计等通用功能，和业务逻辑分离的技术，
+动态地把这些功能添加到需要的代码中
+
+3) 数据访问/集成模块
+包括JDBC、ORM、OXM、JMS和事务模块(Transactions)
+
+事务模块用于Spring管理事务，需要是spring管理的对象。
+
+JDBC模块提供了一个模板，能消除冗长的JDBC编码，还有必须的事务控制。
+
+ORM模块提供与流行的"对象——关系映射"ORM框架的无缝集成，包括Hibernate、JPA、MyBatis等
+
+OXM模块提供对Object/XML映射实现，将java对象映射成XML数据，或反过来。映射实现包括JAXB、Castor、XMLBeans和XStream
+
+JMS(Java Messaging Service)模块提供一套"消息生产者、消费者"模板以便简单使用JMS，JMS用于两个应用程序之间，或分布式系统中发送
+消息，异步通信
+
+4) Web/Remoting模块
+包含Web、Web-Servlet、Web-Struts、Web-Porlet模块
+
+Web模块提供了基础的Web功能，如多文件上传、继承IoC容器、远程过程访问(RMI、Hessian、Burlap)及Web Service支持，提供一个RestTemplate
+类提供方便的Restful services访问
+
+WebServlet模块提供了一个SpringMVC Web框架实现
+
+WebStrus模块提供了与Struts无缝集成
+
+5) Test模块
+支持Junit和TestNG测试框架，还有一写基于Spring的测试功能，如测试Web框架时，模拟Http请求
+
+
+Spring生态中，Spring Boot、Spring Cloud、Data Flow
+
+Spring Boot构建一切服务。旨在尽快启动和运行，极简化spring配置
+Spring Cloud协调一切服务。实现分布式、微服务风格的架构更加简单
+Spring Cloud Data Flow连接一切服务。将企业服务连接到任何移动设备、传感器、可穿戴设备、汽车等物联网上。提供了一个统一的服务，
+用于创建地址流和基于ETL的数据处理模式、可组合的数据微服务
+
+### Spring Boot简介
+1. 是什么
+全新框架，设计目的是简化新Spring应用的初始搭建以及开发过程。
+及大地帮助开发者快速搭建使用Spring框架开发应用程序的过程
+
+遵循"约定优于配置"思想。清除spring框架哪些样板化的配置。继承了spring的优秀基因，使得基于spring开发过程更加简易
+
+spring平台问题是大量的xml配置以及复杂的依赖管理。springboot实现了"零xml配置"的极简开发体验
+
+springboot目标是为平台带来另一种开发体验，简化对这些已有技术的使用。
+
+springboot是构建基于spring的应用程序的起点。
+旨在让你尽快启动和运行，以最小的预先配置的spring配置。
+
+体验到特性：
++ 用Spring Initializr在数秒内创建Spring应用程序
++ 构建REST API、WebSocket、Web、流媒体、任务等
++ 简化安全Security权限开发
++ 丰富的SQL和NoSQL支持
++ 嵌入式运行时支持——tomcat、jetty和Undertow
++ 开发人员的生产力工具，例如实时重载(reload)和自动重启(restart)
++ 开箱即用的模块化依赖
++ 供生产环境直接使用的特性，如跟踪、度量和健康状态的监控
++ 丰富的IDE支持：Spring Tool Suit、IntellijIDEA和NetBeans
+
+核心特性：
++ 创建一键运行的Spring应用
++ 能用内嵌的Tomcat、Jetty或Undertow，不用部署war
++ 提供定制化的启动器starters简化第三方依赖配置
++ 追求极致的自动配置spring
++ 提供一些生产环境的特性，如指标、健康检查和外部配置
++ 零代码生成和零xml配置
+
+
+2. Spring Boot核心模块
+
+1) spring-boot
+Spring Boot核心工程
+
+2) starters
+是Spring Boot的启动服务工程。
+内置starts列表在spring-boot/spring-boot-starts中。例子在spring-boot/spring-boot-samples中
+
+3) autoconfigure
+是实现自动配置的核心工程
+
+4) actuator
+提供Spring Boot引用的外围支撑性功能，如应用状态监控管理、应用健康指示表、远程shell支持、metrics支持等
+
+5) tools
+提供Spring Boot开发者的常用工具集。如spring-boot-gradle-plugin、spring-boot-maven-plugin
+
+6) cli
+是Spring Boot命令行交互工具，用于使用spring进行快速原型搭建。
+用它直接运行groovy脚本。
+
+### 约定优于配置极简化理念
+充分利用用JavaConfig的配置模式及"约定优于配置"(Convention Over Configuration,COC)的理念，极大简化基于SpringMVC的Web应用和
+REST服务的开发
+
+不用xml，用JavaConfig注解方式可以让人容易明白配置代码中的关键信息
+
+例如，标准的基于Gradle构建的Spring Boot应用程序目录结构约定
+LICENSE
+README.md
+build.gradle  --gradle工程项目配置文件
+gradle
+  wrapper
+	  gradle-wrapper.jar
+		gradle-wrapper.properties
+gradlew
+gradlew.bat
+src
+  main
+	  java  --项目java源代码目录
+		kotlin  --项目kotlin源代码目录
+		  com
+			  easy
+				  Spring Boot
+					  demo2_aop_logging
+						  Demo2AopLoggingApplication.kt
+							aop
+							  LogAspect.kt
+							controller
+							  HelloAopController.kt
+    resources  --项目资源文件目录
+		  application-daily.properties
+			application-dev.properties
+			application-prod.properties
+			application.properties
+			static
+			templates
+  test
+	  java  --测试java源代码目录
+		kotlin  --测试kotlin源代码目录
+		  com
+			  easy
+				  Spring Boot
+					  demo2_aop_logging
+						  Demo2AopLoggingApplicationTests.kt
+		resources  --测试资源文件目录
+
+COC是一个古老的思想理念
+
+Spring通过使用约定好的注解来标示Spring应用中各层中Bean类
++ @Component：一个普通的Spring Bean类
++ @Controller：一个控制器组件类
++ @Service：一个业务逻辑组件类
++ @Repository：一个DAO组件类
+
+他们设计理念都包含一个简单但深刻的道理——通用。为什么通用？因为遵循约定
+
+
+### 小结
+spring boot，boot spring，是框架设计的初心
+
+spring都努力让开发者能极简快速地创建并开发应用
+
+## 第2章，快速开始HelloWorld
+### 创建Spring Boot项目
+file->new->project->Spring Initializr，jdk1.8，kotlin，选择web启动以来
+
+### Spring Boot项目的入口类
+SpringbootkfszApplication是入口类
+org.springframework.boot.runApplication是针对kotlin扩展的功能类SpringApplicationExtensions.kt中的内联函数
+运行
+
+### 添加HelloWorldController
+启动应用
+http://localhost:8080
+
+### Spring Boot应用注解@SpringBootApplication
+封装了三个注解:
++ @SpringBootConfiguration：配置类注解
++ @EnableAutoConfiguration：启用自动配置注解
++ @ComponentScan：组件扫描注解
+
+1. Spring Boot配置类注解
+@SpringBootConfiguration与@Component一样，
+@SpringBootConfiguration是Spring Boot包装的@Configuration注解
+而@Configuration使用的又是@Component注解
+
+@Component作用是把普通的POJO实例化到spring容器中，相当于<bean id="" class=""/>
+
+类上添加@Configuration，表明这个类代表一个Spring配置文件，与xml配置时等效的。
+
+Spring容器可以扫描任何我们添加@Component注解的类，Bean的注册逻辑在ClassPathScanningCandidateComponentProvider类的
+registerDefaultFilters里
+
+### 启用自动配置注解
+@EnableAutoConfiguration是核心，
+
+导入配置类注解@Import，标识导入@Comfiguration标注的配置类。
+@Import用来整合所有在@Comfiguration注解中定义的Bean配置。与将多个xml配置文件导入到单个文件一样。
+
+使用@EnableAutoConfiguration可以启用Spring应用程序上下文的自动配置，Spring Boot会尝试猜测和配置你可能用到的Bean。
+通常根据类路径中定义的Bean来推断可能要怎样的配置。
+
+Spring Boot默认扫描的包路径是，入口类SpringbootkfszApplication所在的根包中及其所有的子包
+
+### 组件扫描注解
+@ComponentScan提供功能与xml中<context:component-scan/>等价。
+对应处理类是ConfigurationClassPaser。
+@ComponentScan告诉Spring去哪个package下扫描Spring注解。spring自动扫描这些被spring注解标注的类，将其注册到bean容器中
+
+默认只扫描当前启动类所在的包里的类
+
+可以设定basePackageClasses值来指定要扫描哪个类所在的包
+
+### XML配置与注解配置
+1. xml配置
+优点：可以再后期维护时适当地调整bean管理模式，只要遵循一定的命名规范，可以让程序员不必关心Bean之间的依赖关系
+缺点：系统庞大，xml配置文件就越大；关系错综复杂，容易出错
+
+2. 注解配置
+优点：配置比较方便，只要在service层代码设置即可实现，不用知道系统需要多少个Bean，交给容器来注入就好
+缺点：当要修改或删除一个Bean时，无法确定到底有多少个其他的Bean依赖这个Bean。(解决方法：要有严格的开发文档，在修改实现时尽可能
+继续遵守相应的接口规则，避免其他依赖于此的Bean不可用)
+
+### 小结
+约定优于配置
+
+## 第3章，深入理解Spring Boot自动配置
+### 传统SSM开发过程
+spring+spinrgMVC+myBatic，曾经是主流的企业级架构方案：标准的MVC分层架构设计模式，将系统划分为模板视图view层、控制器controller层、
+业务逻辑service层、数据访问dao层。
+
+使用spring mvc负责请求的转发和视图管理，使用spring核心容器实现业务对象的协作和生命周期的管理，mybatis作为数据库orm层的对象持久化引擎
+
+要小心配置pom很多，版本要兼容。
+仔细配置spring上下文spring.xml文件。
+
+applicationContext.xml是spring的默认配置文件，
+
+若是java web项目，还要配置springmvc的上下文spring-mvc.xml，配置默认的注解映射支持、自动扫描包路径、视图模板引擎等
+DispathcerServlet在初始化过程中使用。提供了spirng web mvc的集中访问点，负责职责的分派，与spring ioc容器无缝集成
+web.xml还要配置DispathcerServlet
+
+web.xml用来初始化整个项目的配置信息，如welcome页面、servelt、servlet-mapping、filter、listener、启动加载级别等。
+又叫部署描述符文件，在servlet规范中定义的，是web应用的配置文件
+
+web.xml加载顺序：
+<context-param>  -- <listener> -- <filter> -- <servlet>
+
+
+springboot中大量使用基于注解的配置，从而去除xml配置
+
+### springboot自动配置原理
+通过自动配置和提供一系列开箱即用的启动器starter封装上面的复杂性使其简单化
+
+1. java配置
+spring3.x和4.x就有大量简化xml配置的方案：
++ 组件扫描，Component Scan：spring去自动发现引用上下文中创建的bean
++ 自动装配,Autowire：spring自动创建bean之间的依赖
++ 通过javaConfig实现java代码配置Bean
+参见：JavaConfigTest
+
+2. 条件化Bean
+1) 条件注解@Conditional
+根据特定的条件来选择Bean对象的创建。
+
+在spring中条件注解，是设计模式中状态模式的一种体现方式，也是面向对象编程中多态的应用部分
+
+常用条件注解：
++ @ConditionalOnBean：仅在当前上下文中存在某个对象时，才会实例化此bean
++ @ConditionalOnClass：当class位于类路径上，才会实例化此bean
++ @ConditionOnExpression：当表达式为true，才实例化此bean
++ @ConditionOnMissingBean：仅当前上下文中不存在某个对象时，才会实例化此bean
++ @ConditionOnMissingClass：当类路径上不存在某个class时，才会实例化此bean
++ @ConditionOnNotWebApplicaiton：当不是一个web应用时
+
+2) 条件注解使用实例
+工程参见：condition包
+
+b. 实现Condition接口
+MagicCondition
+
+ConditionContext方法：
++ getRegistry
+返回，保存Bean定义的BeanDefinitionRegistry对象，可用来检查bean的定义
++ getBeanFactory
+返回ConfigrableListableBeanFactory对象，用来检查bean是否存在
++ getEnvironment
+检查环境变量是否存在
++ getResourceLoader
+读取并检查它返回的ResourceLoader所加载的资源
++ getClassloader
+返回类加载器对象ClassLoader来加载类并检查类是否存在
+
+
+AnnotatedTypeMetadata能检查带有@Bean注解的方法上是否有其他注解
+
+例如spring4使用@Conditional对多环境部署配置文件功能，实现的ProfileCondition类
+
+c. 条件配置类ConditionalConfig
+spring4提供了一个通用的基于特定条件创建bean的方式：@Conditional
+
+### 组合注解
+将现有的注解进行组合，生成一个新的注解
+
+例如：@SpringBootApplicaiton
+早期springboot用户要三个注解@Configuration/@EnableAutoCondiguration/@ComponentScan，现在只用一个
+
+### springboot自动配置过程
+都在@EnableAutoConfiguration里
+核心是@Import(EnableAutoConfigurationImportSelecotr.class)，
+借助EnableAutoConfigurationImportSelecotr、@EnableAutoConfiguration，springboot将所有符合条件的Configuration
+配置类都加载到对当前容器中
+
+用了Spring框架的工具类SpringFactoriesLoader，这样，@EnableAutoConfiguration就可以智能实现Bean的自动配置
+
+1. @EnableAutoConfiguration注解
+springboot用此注解启用spring应用程序上下文的自动配置，
+此注解会导入一个AutoConfigurationImportSelector类，其会读取spring.factories下key为EnableAutoConfiguration对应的类
+全限定名的值
+关键代码：getCandidateConfigurations，过滤出key为EnableAutoConfiguration的全限定名对应的值
+spring.factories中配置的类，主要作用是告诉springboot这个starter所需要加载的那些*AutoConfiguration类，即真正要自动注册的bena
+
+然后，再实现一个spring.factories指定的类，标上@Configuration注解，一个starter定义完成
+
+2. spring.factories文件
+org.springframework.boot.autoconfigure.EnableAutoConfiguration作为key，对应的value就是依据条件加载的配置
+
+3. 获取候选配置类
+读取spring.factories文件由SpringFactoriesLoader完成，类似SPI，
+java SPI提供了一种服务发现机制，为某个接口寻找服务实现的机制。类似ioc思想，将装配的控制权转移到程序外，在模块化设计中重要
+
+SpringFactoriesLoader加载classpath下所有JAR中的META-INF/spring.factories文件
+代码在loadFactoryNames中
+
+
+### FreeMarkerAutoConfiguration实例分析
+实战分析springboot集中Freemarker模板引擎的整个自动配置过程
+
+1. spring-boot-starter-freemarker工程
+是实现Free Marker模板引擎自动配置的启动工程
+工程没有java代码，只有文件pom.xml、spring.provides
+
+springboot通过starter对项目的依赖进行统一管理，
+start利用maven的传递依赖解析机制，把常用库聚合在一起，组成了针对特定功能而定制的依赖starter
+
+当springbootApplicaiotn中自动配置EnableAutoConfiguration的相关类执行完成后，springboot进一步解析对应类的配置信息
+若配置了spring-boot-starter-freemarker，maven就通过这个stater所以来的spring-boot-autoconfigure自动传递到
+spring-boot-autoconfigure工程中
+
+2. spring-boot-autoconfigure工程
+FreeMarker自动配置入口类时FreeMarkerAutoConfiguration
+
+看下FreeMarkerServletWebConfiguration，主要是用于配置基于servelet web context的Freemarker的配置
+
+很多自定义starter都这样
+
+### 小结
+介绍传统SSM的java web项目完整开发过程，然后用spring boot来完成同样工作。
+通过对比学习，加深理解springboot怎样通通过自动配置实现"极简化配置"
+
+
+# 第二部分，Springboot项目总和实战
+## 第4章，spring boot继承mybatis数据库层开发
+xxxxxxxx
+
+
+## 第5章，spring boot集成JPA数据库层开发
+### JPA简介
+JPA(Java Persistence API)，sun提出的java持久化规范
+为了简化持久化开发工作和整合ORM技术，结束Hibernate、TopLink、JDO等ORM框架各自为营
+充分吸收现有ORM框架的基础上发展，易于使用，伸缩性强
+
+支持面向对象的高级特性，如类之间的继承、多态和类之间的复杂关系，使用者可最大限度地用面向对象的模式设计企业应用
+
+JPA核心组成：
++ Persistence：包含静态方法获取EntityMangerFactory实例
++ EntityManagerFactory：EntityManager的工厂类，创建并管理多个EntityManager实例
++ EntityManager：一个接口，管理持久化操作的对象，类似工厂的查询实例，
+与Query一对多，一个EntityManager可以执行多个查询
+与Entity是一对多，一个EntityManager实例可以管理多个Entity实体
++ Entity：持久性对象，存储在数据库中的记录
++ EntityGraph：指定查找操作或查询路径和边界的更好的方案
++ Query：连接每个JPA供应商，能获得符合标准的关系对象
++ EntityTransaction：与EntityManger一对一，对于每个EntityMangger，操作是由EntityTransaction类维护
+
+实例对象生命周期：
++ New：新创建的实例对象，没有identity值
++ Managed：在持久化上下文中受管理的对象
++ Detached：游离于持久化上下文之外的实例对象
++ Removed：被删除的实例对象
+
+1. JPA生态
+主要设计者是Hibernate的设计者。
+JPA是一种规范，列斯JDBC，Hibernate是一种ORM技术的产品
+
+低耦合在软件设计上追求的目标，用JPA可以把应用完全从Hibernate中解脱。
+JPA宗旨是为POJO提供持久化标准规范，能脱离容器独立运行，方便开发和测试
+
+Spring Data JPA在JPA规范基础下提供了Repository层的实现。封装了各种ORM框架实现JPA的差异。
+
+JPA是一个规范，一组接口，用的话还是要结合实现，如Hibernate
+提供一种通用的访问各个ORM实现产品的桥梁
+
+2. JPA技术栈
+包括：
++ ORM映射元数据
+JPA支持xml和注解两种元数据形式。
+元数据描述对象和表之间的映射关系，框架据此将尸体对象持久化到数据库表中
++ Java持久化API
+JPA提供的持久化API，用来操作实体对象，执行CRUD
++ JPA查询语言
+JPQL(Java Persistence Query Language)是JPA的结构化查询语言，类似SQL
+通过面向对象而非面向数据库的查询语言去查询数据，实现数据库表名根实体名EntityName的解耦
+
+### ORM框架概述
+Entity EJB/Hibernate/MyBatis/TopLink/OBJ
+
+### Hibernate简介
+JPA需要用Provider实现功能，Hibernate就是一个。
+
+三个组件：
++ hibernate-annotation
+是Hibernate支持annotation方式配置的基础，包括标准的JPA annotation及特殊的
++ hibernate-core
+核心实现，提供了Hibernate所有的核心功能
++ hibernate-entitymanager
+实现了标准的JPA，是hibernate-core和JPA之间的适配器
+
+
+Hibernate核心模块：
++ 瞬态对象(Transient Object)
+表示与当前会话不相关的持久类的实例
+持久化对象与会话关联，一旦会话关闭，他们将被分离，可以再任何应用层中自由使用
++ 配置对象(Configuration)
+表示Hibernate所需的配置，通常在应用程序初始化期间创建一次，用来连接到数据库，并创建SessionFactory
++ 对象关系映射(Mapping)
+java POJO类和数据库表之前的映射
+
+详细架构中核心组件
+1) 会话工厂(SessionFactory)
+负责初始化Hibernate，充当数据库源的代理，负责创建Session。一般一个够了，当对多个数据库操作时可以多个。线程安全
+
+在Spring Boot集成Spring Data JAP(默认用Hibernate)时，自动配置采用基于javaConfig注解的方式创建SessionFactory
+
+2) 会话(Session)
+HttpSession称为用户会话，保存用户会话过程中状态信息
+Hibernate中Session用来表示应用程序和数据库的一次交互(会话)，包含了一般的持久化方法(CRUD)，封装了JDBC连接、事务等。
+还保存了持久化对象的缓存，用于遍历实体对象图，或表示查找对象
+
+Session是一个轻量级、单线程对象(不安全)，通常每一个session实例和一个数据库事务绑定
+
+整个系统只有一个Coniguration和SessionFactory对象，但不同而用户访问不同的sesison
+session生命周期内可进行多个操作，直到线程访问结束
+
+3) 持久化对象(Persistent Object，PO)
+是生命周期段短暂的单个线程对象，包含了持久化状态，从属于且仅属于一个session
+
+4) 瞬态对象(Transient Object)
+没有与特定Session关联的对象，可能是刚实例化，还没持久化的对象，或一个已经被关闭的Session关联的
+
+5) 事务工厂(TransactionFactory)
+事务实例的工厂，用于创建事务
+应用程序不可见，支持扩展实现
+
+6) 事务(Transaction)
+提供事务操作的支持，单线程对象，代表一次原子操作
+Hibernate事务，是对底层具体的JDBC、JTA及CORBA事务的抽象
+一个session在某些情况下可能跨越多个事务
+
+7) 连接提供者(Connectionprovider)
+jdbc连接池，从底层的Datasource或DriverManager抽象而来。
+对应用程序不可见，支持扩展实现
+
+8) Query和Criteria接口
+执行各种数据库查询操作。
+session对昂生成Query或Transaction对象
+
+
+Hibernate优点：
++ 面向对象的ORM编程
++ 轻量级
+对jdbc轻量级封装(没有侵入性)，独立的框架
++ 移植性好
+提供一级缓存和二级缓存
++ 简洁的HQL编程
++ 高性能
+支持延迟初始化，提供多样化的数据获取策略、自动版本和时间戳的乐观锁定
++ 可靠
++ 可扩展
+
+
+Hibernate缺点：
++ 在大批量数据处理时有弱势
++ 单一对象CRUD适合，对批量的CRUD不适合。要用数据库的特定优化机制时，不适合。这时通常用MyBatis自动化
+
+hibernate面向对象，致力于解决计算机逻辑问题
+mybatis面向关系，致力于解决数据的高效存储问题
+
+### Spring Data JPA简介
+Spring Data项目是spring的一个子项目，旨在统一和简化各类型持久化存储。
+Spring Data JPA是其中之一，
+
+针对不同的存储，提供不同的子项目进行支持
+
+JPA 简化基于JPA的ORM框架使用，极简地创建数据访问Respositories
+
+通过Spirng Data， 开发者可以用Spring提供的相对一致的方式访问位于不同类型的数据存储中的数据
+
+无论哪种持久存储，数据访问对象(Data Access Objects， DAO)通常提供实体对象的CRUD等操作。
+SpringData提供了基于这些层面的统一接口(CrudRepository和PagingAndSortingRepository)以及对持久化存储的实现
+接口定义在spring-data-commons中
+
+Spring Data JPA目标是是吸纳数据访问层代码的极简化，简化基于JPA规范的ORM框架的使用
+只需要实现JPA提供的Repository接口，就能拥有通用的CRUD及分页、排序等API接口
+
+### 项目实战
+1. Spring Data JPA提供的接口
++ Repository：最顶层的接口，空的接口，目的是统一所有Repository的类型，且能让组件扫描时自动识别
++ CrudRepository：是Repository子接口，提供CRUD功能
++ PagingAndSortingRepository：是CrudRepository子接口，添加分页和排序功能
++ JpaRepository：是PagingAndSortingRepository子接口，增加一些实用功能，如saveAll、findAll、deleteInBatch等
++ JpaSpecificationExecutor：负责查询接口
++ Specification：一种查询规范，要做复杂查询，用围绕这个规范设置查询条件。
+
+2. 创建项目
+spring-boot-starter-data-jpa是Spring Boot集成Spring Data JPA的起步依赖
+
+3. 配置数据库连接
+
+4. 自动生成Entity实体类代码
+
+5. 配置项目数据源信息
+
+6. 查询接口
+fidnAll由JpaRepository声明，由框架在运行时实现。
+findAll->jdkDynamicAopProxy->SimpleJpaRepository实现类中
+
+7. 分页查询
+
+11. JPQL语法基础
+JPOL(Java Persistence Query Language)与sql类似
+面向对象的，具备继承、多太和关联等特性
+
+注意：
++ 实体名和属性区分大小写
+除了java类名和属性名外，都是大小写不敏感
++ JPQL中保留关键字不区分大小写
++ 标识实体的别名，也不区分大小写
++ 实体别名可用AS标识，也可以省略
+
+select c.name from Customer c
+select c.address.street from Customer c  多级属性访问
+
+1) JPQL函数
+select c from Customer c where Length(c.name) >10
+
+提供函数：
++ concat(str1, str2)
++ substring(str, start, len)
+start从1开始
++ trim(str)
++ length(str)
++ lower(string)
++ upper(str)
+
+select c from Customer c where ABS(c.asset) > 20
+
+主要数值函数：
++ ABS(num)
++ SQRT(num)
+平方
++ MOD(int, int)取模
++ SIZE，返回集合类的总数
+
+当前时间
++ CURRENT_DATE
++ CURRENT_TIME
++ CURRENT_TIMESTAMP
+
+2) 子查询
+一个查询条件依赖于另一个查询结果
+select c from Customer c where c.age > (select avc(c.age) from Custom c)
+
+3) EXISTS表达式
+用于判断子查询的结果，若子查询的结果有一个或多个，则返回true否则false
+[not] exists (子查询表达式)
+
+查询系统当前日期之前的订单所属的客户
+select c from Customer c where exists
+(select o from c.orders o where o.createTime < current_date)
+
+4) All和ANY表达式
+当子查询的返回结果有多个，顶层查询的条件使用=、<、<=、>、>=、<>比较来满足条件，需要用All、any和some
+(all|any|some) (子查询)
+
+查询订单明细中存在50个以上的订单
+select o from order o where 50 < any (select l.quantity from o.lineItems l)
+
+5)group by
+按照指定的属性将数据分组，
+
+group by <分组子句> (Having <having子句>)
+
+select c from Customer c group by c.asset having avg(c.asset) > 1000
+
+6) order by
+order by 排序属性 [asc|desc] {,排序属性[ASC|DESC]}*
+
+select c from Customer c order by c.id asc, c.name desc
+
+7) member of
+用于判断一个实体是否包含在集合类对象中(member of前可加not)
+select c from Customer c where :order member of c.orders
+
+8) update
+针对单个实体类的批量更新
+update Customers c set c.status = 'xx' where c.balance < 1000
+
+9) delete
+
+删除不活跃、没有订单的客户
+delete from Customers c where c.status = 'inactive' and c.orders is empty
+
+10) join
+连接后，关联数据不会出现null值
+[inner] join
+select c,o from customer c join c.orders o
+
+11) left join
+以左表为基础，关联右表，连接后右表中数据可能为null值
+left [outer] join
+select c,o from customer c left join c.orders o
+
+12) join fetch
+实体属性的加载有两种，即时加载和懒加载，
+对于实体关联的查询，也可以设置查询时加载方式，就是抓取连接
+[left|inner] join fetch
+主要针对实体属性为懒加载方式
+
+使用内连接并没有加载关联的实体
+select c from customer c join c.orders o
+若调用getOrders则异常
+
+将关联查询，设置为抓取方式
+select c from customer c join fetch
+查询结果的customer对象已加载所关联的orders属性
+
+
+13) distinct
+select distinct c from customer c join c.orders o
+
+14) 比较操作符
+where条件表达式可包含比较操作符和逻辑操作符：
+=等、[not] between、[not] like、[not] in、is [not] null、is empty、and、or
+
+
+12. JPA常用注解
++ @Entity，声明类为实体或表
++ @Table，声明表名
++ @Basic，指定非约束明确的各个字段
++ @Embedded，指定类或它的值是一个可嵌入的类的实例的实体的属性
++ @Id，指定类的属性，用于表示一个表的主键
++ @GeneratedValue，
+指定如何进行标识属性初始化，四种主键生成器：
+a. TABLE，由jpa体用通过创建数据库表来记录生成的主键值
+b. SEQUENCE，由数据库Sequence对象提供主键值
+c. IDENTITY,由数据库的自增列提供主键值
+d. auto，由jpa提供者根据数据库自行决定
++ @Transient，指定的属性，不持久
++ @Column，指定持久属性列属性
++ @SequenceGenerator，定义使用@GeneratedValue注解的主键生成器
+@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQ_NAME")。定义一个生成主键的序列
++ @TableGenerator，定义主键生成器。定义表生成策略
++ @AccessType，设置访问类型，
++ @JoinColumn，指定一个实体组织或实体集合，用在多对一和一对多关联
++ @UniqueConstraint，指定唯一约束
++ @ColumnResult，sql查询select子句中列的引用名称
++ @ManyToMany，定义连接表之前的多对多、一对多的关系
++ @ManyToOne，定义连接表之间的多对一的关系
++ OneToOne，定义连接表一对一的关系
++ @NamedQueries，指定命名查询的列表
++ @NamedQuery，指定命名查询
+
+### 本章小结
+
+
+
+##
